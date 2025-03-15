@@ -1,0 +1,42 @@
+# IntelliJ IDEA
+.idea/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+target/
+
+# Spring Boot specific
+*.log
+*.h2.db
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE specific files
+*.iml
+
+# Temporary files
+*.swp
+*.swo
+
+# Dependency directories
+node_modules/
