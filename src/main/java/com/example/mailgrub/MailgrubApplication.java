@@ -1,13 +1,13 @@
-package com.example.restservice;
+package com.example.mailgrub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Application {
+public class MailgrubApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(MailgrubApplication.class, args);
 	}
 
 }
