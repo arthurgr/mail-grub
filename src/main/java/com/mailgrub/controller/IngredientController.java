@@ -1,12 +1,13 @@
-package com.example.mailgrub.controller;
+package com.mailgrub.controller;
 
-import com.example.mailgrub.model.Ingredient;
-import com.example.mailgrub.repository.IngredientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RestController // Use @RestController instead of @Controller for API responses
-@RequestMapping(path = "/ingredients") // Base path for Ingredient API
+import com.mailgrub.model.Ingredient;
+import com.mailgrub.repository.IngredientRepository;
+
+@RestController
+@RequestMapping(path = "/ingredients")
 public class IngredientController {
 
     @Autowired

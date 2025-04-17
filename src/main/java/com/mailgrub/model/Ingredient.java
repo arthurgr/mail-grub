@@ -1,4 +1,4 @@
-package com.example.mailgrub.model;
+package com.mailgrub.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
