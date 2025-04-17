@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 public class Ingredient {
@@ -17,7 +19,7 @@ public class Ingredient {
 
     private Double purchaseSize;
 
-    private Double averageCost;
+    private BigDecimal averageCost;
 
     public Integer getId() {
         return id;
@@ -51,19 +53,21 @@ public class Ingredient {
         this.purchaseSize = purchaseSize;
     }
 
-    public Double getAverageCost() {
+    public BigDecimal getAverageCost() {
         return averageCost;
     }
 
-    public void setAverageCost(Double averageCost) {
+    public void setAverageCost(BigDecimal averageCost) {
         this.averageCost = averageCost;
     }
 
     // Calculated field: costPerOunce
     public Double getCostPerOunce() {
-        if (purchaseSize == null || purchaseSize == 0) {
-            return 0.0; // Avoid division by zero
+        if (purchaseSize == null || purchaseSize == 0 || averageCost == null) {
+            return 0.0;
         }
-        return averageCost / purchaseSize;
+        return averageCost
+                .divide(BigDecimal.valueOf(purchaseSize), 4, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }
