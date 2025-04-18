@@ -15,12 +15,13 @@ public class Ingredient {
 
     private String name;
 
-    private String measurementType;
+    private MeasurementType measurementType;
 
     private Double purchaseSize;
 
     private BigDecimal averageCost;
 
+    // Getter and setter methods
     public Integer getId() {
         return id;
     }
@@ -37,11 +38,11 @@ public class Ingredient {
         this.name = name;
     }
 
-    public String getMeasurementType() {
+    public MeasurementType getMeasurementType() {
         return measurementType;
     }
 
-    public void setMeasurementType(String measurementType) {
+    public void setMeasurementType(MeasurementType measurementType) {
         this.measurementType = measurementType;
     }
 
@@ -54,20 +55,29 @@ public class Ingredient {
     }
 
     public BigDecimal getAverageCost() {
-        return averageCost;
+        return averageCost.setScale(2, RoundingMode.HALF_UP);  // Ensure two decimal places for currency
     }
 
     public void setAverageCost(BigDecimal averageCost) {
-        this.averageCost = averageCost;
+        this.averageCost = averageCost.setScale(2, RoundingMode.HALF_UP);  // Ensure two decimal places for currency
     }
 
-    // Calculated field: costPerOunce
-    public Double getCostPerOunce() {
+    // Method to calculate cost per ounce with conversion logic, returning BigDecimal
+    public BigDecimal getCostPerOunce() {
         if (purchaseSize == null || purchaseSize == 0 || averageCost == null) {
-            return 0.0;
+            return BigDecimal.ZERO;
         }
+
+        // Convert all units to ounces for calculation
+        BigDecimal purchaseSizeInOunces = BigDecimal.valueOf(purchaseSize);
+        if (measurementType == MeasurementType.KG) {
+            purchaseSizeInOunces = purchaseSizeInOunces.multiply(BigDecimal.valueOf(35.274));  // 1 kg = 35.274 oz
+        } else if (measurementType == MeasurementType.LB) {
+            purchaseSizeInOunces = purchaseSizeInOunces.multiply(BigDecimal.valueOf(16));  // 1 lb = 16 oz
+        }
+
         return averageCost
-                .divide(BigDecimal.valueOf(purchaseSize), 4, RoundingMode.HALF_UP)
-                .doubleValue();
+                .divide(purchaseSizeInOunces, 4, RoundingMode.HALF_UP) // Return cost per ounce as BigDecimal
+                .setScale(2, RoundingMode.HALF_UP); // Round to 2 decimal places for money handling
     }
 }
