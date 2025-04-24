@@ -20,7 +20,10 @@ public class IngredientController {
     }
 
     @GetMapping(path = "/all")
-    public @ResponseBody Iterable<Ingredient> getAllIngredients() {
+    public @ResponseBody Iterable<Ingredient> getAllIngredients(@RequestParam(required = false) String name) {
+        if (name != null && !name.isEmpty()) {
+            return ingredientRepository.findByNameContainingIgnoreCase(name);
+        }
         return ingredientRepository.findAll();
     }
 
