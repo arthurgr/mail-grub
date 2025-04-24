@@ -13,18 +13,18 @@ public class IngredientController {
     @Autowired
     private IngredientRepository ingredientRepository;
 
-    @PostMapping(path = "/add")
-    public @ResponseBody String addNewIngredient(@RequestBody Ingredient ingredient) {
-        ingredientRepository.save(ingredient);
-        return "Ingredient Saved";
-    }
-
     @GetMapping(path = "/all")
     public @ResponseBody Iterable<Ingredient> getAllIngredients(@RequestParam(required = false) String name) {
         if (name != null && !name.isEmpty()) {
             return ingredientRepository.findByNameContainingIgnoreCase(name);
         }
         return ingredientRepository.findAll();
+    }
+
+    @PostMapping(path = "/add")
+    public @ResponseBody String addNewIngredient(@RequestBody Ingredient ingredient) {
+        ingredientRepository.save(ingredient);
+        return "Ingredient Saved";
     }
 
     @DeleteMapping(path = "/delete/{id}")
