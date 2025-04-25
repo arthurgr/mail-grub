@@ -1,11 +1,14 @@
 package com.mailgrub.repository;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.mailgrub.model.Ingredient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.ListCrudRepository;
 
-import java.util.List;
+public interface IngredientRepository
+        extends ListCrudRepository<Ingredient, Integer>,
+        PagingAndSortingRepository<Ingredient, Integer> {
 
-public interface IngredientRepository extends CrudRepository<Ingredient, Integer> {
-    List<Ingredient> findByNameContainingIgnoreCase(String name);
+    Page<Ingredient> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

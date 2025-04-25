@@ -1,10 +1,14 @@
 package com.mailgrub.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import com.mailgrub.dto.PagedResponse;
+import com.mailgrub.dto.PagedResponse.Meta;
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.repository.IngredientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/ingredients")
@@ -13,12 +17,27 @@ public class IngredientController {
     @Autowired
     private IngredientRepository ingredientRepository;
 
-    @GetMapping(path = "/all")
-    public @ResponseBody Iterable<Ingredient> getAllIngredients(@RequestParam(required = false) String name) {
-        if (name != null && !name.isEmpty()) {
-            return ingredientRepository.findByNameContainingIgnoreCase(name);
-        }
-        return ingredientRepository.findAll();
+    @GetMapping
+    public @ResponseBody PagedResponse<Ingredient> getIngredients(
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Ingredient> pageResult =
+                (name != null && !name.trim().isEmpty()) ?
+                        ingredientRepository.findByNameContainingIgnoreCase(name.trim(), pageable)
+                        : ingredientRepository.findAll(pageable);
+
+        Meta meta = new Meta(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.isLast()
+        );
+
+        return new PagedResponse<>(pageResult.getContent(), meta);
     }
 
     @PostMapping(path = "/add")
