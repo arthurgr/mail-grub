@@ -46,21 +46,6 @@ public class RecipeController {
     }
 
     @PostMapping("/add")
-    public @ResponseBody String addRecipe(@RequestBody Recipe recipe) {
-        recipeRepository.save(recipe);
-        return "Recipe saved";
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public @ResponseBody String deleteRecipe(@PathVariable Integer id) {
-        if (!recipeRepository.existsById(id)) {
-            return "Recipe not found";
-        }
-        recipeRepository.deleteById(id);
-        return "Recipe deleted";
-    }
-
-    @PostMapping("/add-with-ingredient-ids")
     public @ResponseBody String addRecipeWithIngredientIds(
             @RequestParam String name,
             @RequestBody List<Integer> ingredientIds
@@ -70,7 +55,37 @@ public class RecipeController {
         recipe.setName(name);
         recipe.setIngredients(ingredients);
         recipeRepository.save(recipe);
-        return "Recipe with ingredients saved";
+        return "Recipe saved";
+    }
+
+    @PatchMapping("/update/{id}")
+    public @ResponseBody String updateRecipe(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String name,
+            @RequestBody(required = false) List<Integer> ingredientIds
+    ) {
+        return recipeRepository.findById(id).map(recipe -> {
+            if (name != null && !name.trim().isEmpty()) {
+                recipe.setName(name.trim());
+            }
+
+            if (ingredientIds != null && !ingredientIds.isEmpty()) {
+                List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(ingredientIds);
+                recipe.setIngredients(ingredients);
+            }
+
+            recipeRepository.save(recipe);
+            return "Recipe updated";
+        }).orElse("Recipe not found");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public @ResponseBody String deleteRecipe(@PathVariable Integer id) {
+        if (!recipeRepository.existsById(id)) {
+            return "Recipe not found";
+        }
+        recipeRepository.deleteById(id);
+        return "Recipe deleted";
     }
 
 }
