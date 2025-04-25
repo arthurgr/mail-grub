@@ -1,5 +1,7 @@
 package com.mailgrub.controller;
 
+import com.mailgrub.dto.RecipeRequest;
+import com.mailgrub.dto.RecipeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,31 +48,36 @@ public class RecipeController {
     }
 
     @PostMapping("/add")
-    public @ResponseBody String addRecipeWithIngredientIds(
-            @RequestParam String name,
-            @RequestBody List<Integer> ingredientIds
-    ) {
-        List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(ingredientIds);
+    public @ResponseBody String addRecipe(@RequestBody RecipeRequest request) {
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            return "Recipe name is required";
+        }
+
         Recipe recipe = new Recipe();
-        recipe.setName(name);
-        recipe.setIngredients(ingredients);
+        recipe.setName(request.getName().trim());
+
+        if (request.getIngredientIds() != null && !request.getIngredientIds().isEmpty()) {
+            List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(request.getIngredientIds());
+            recipe.setIngredients(ingredients);
+        }
+
         recipeRepository.save(recipe);
         return "Recipe saved";
     }
 
+
     @PatchMapping("/update/{id}")
     public @ResponseBody String updateRecipe(
             @PathVariable Integer id,
-            @RequestParam(required = false) String name,
-            @RequestBody(required = false) List<Integer> ingredientIds
+            @RequestBody RecipeUpdateRequest updateRequest
     ) {
         return recipeRepository.findById(id).map(recipe -> {
-            if (name != null && !name.trim().isEmpty()) {
-                recipe.setName(name.trim());
+            if (updateRequest.getName() != null && !updateRequest.getName().trim().isEmpty()) {
+                recipe.setName(updateRequest.getName().trim());
             }
 
-            if (ingredientIds != null && !ingredientIds.isEmpty()) {
-                List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(ingredientIds);
+            if (updateRequest.getIngredientIds() != null && !updateRequest.getIngredientIds().isEmpty()) {
+                List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(updateRequest.getIngredientIds());
                 recipe.setIngredients(ingredients);
             }
 
