@@ -51,8 +51,10 @@ public class RecipeController {
             RecipeResponse response = new RecipeResponse();
             response.setId(recipe.getId());
             response.setName(recipe.getName());
+            response.setItemsMade(recipe.getItemsMade());
             response.setIngredients(ingredients);
             response.setTotalCost(recipe.getTotalCost());
+            response.setCostPerItem(recipe.getCostPerItem());
             return response;
         }).toList();
 
@@ -75,6 +77,7 @@ public class RecipeController {
 
         Recipe recipe = new Recipe();
         recipe.setName(request.getName().trim());
+        recipe.setItemsMade(request.getItemsMade());
 
         List<RecipeIngredient> recipeIngredients = request.getIngredients().stream().map(entry -> {
             Ingredient ingredient = ingredientRepository.findById(entry.getIngredientId()).orElseThrow();
@@ -98,6 +101,10 @@ public class RecipeController {
         return recipeRepository.findById(id).map(recipe -> {
             if (updateRequest.getName() != null && !updateRequest.getName().trim().isEmpty()) {
                 recipe.setName(updateRequest.getName().trim());
+            }
+
+            if (updateRequest.getItemsMade() != null) {
+                recipe.setItemsMade(updateRequest.getItemsMade());
             }
 
             if (updateRequest.getIngredients() != null && !updateRequest.getIngredients().isEmpty()) {
