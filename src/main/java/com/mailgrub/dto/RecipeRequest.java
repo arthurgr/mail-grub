@@ -5,6 +5,7 @@ import java.util.List;
 public class RecipeRequest {
     private String name;
     private List<IngredientAmount> ingredients;
+    private Integer itemsMade;
 
     public String getName() {
         return name;
@@ -20,6 +21,14 @@ public class RecipeRequest {
 
     public void setIngredients(List<IngredientAmount> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public Integer getItemsMade() {
+        return itemsMade;
+    }
+
+    public void setItemsMade(Integer itemsMade) {
+        this.itemsMade = itemsMade;
     }
 
     public static class IngredientAmount {

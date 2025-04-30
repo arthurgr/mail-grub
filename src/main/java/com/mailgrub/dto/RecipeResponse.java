@@ -8,6 +8,8 @@ public class RecipeResponse {
     private String name;
     private List<IngredientEntry> ingredients;
     private BigDecimal totalCost;
+    private BigDecimal costPerItem;
+    private Integer itemsMade;
 
     public Integer getId() {
         return id;
@@ -39,6 +41,22 @@ public class RecipeResponse {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public BigDecimal getCostPerItem() {
+        return costPerItem;
+    }
+
+    public void setCostPerItem(BigDecimal costPerItem) {
+        this.costPerItem = costPerItem;
+    }
+
+    public Integer getItemsMade() {
+        return itemsMade;
+    }
+
+    public void setItemsMade(Integer itemsMade) {
+        this.itemsMade = itemsMade;
     }
 
     public static class IngredientEntry {
