@@ -4,7 +4,7 @@ import java.util.List;
 
 public class RecipeRequest {
     private String name;
-    private List<Integer> ingredientIds;
+    private List<IngredientAmount> ingredients;
 
     public String getName() {
         return name;
@@ -14,11 +14,32 @@ public class RecipeRequest {
         this.name = name;
     }
 
-    public List<Integer> getIngredientIds() {
-        return ingredientIds;
+    public List<IngredientAmount> getIngredients() {
+        return ingredients;
     }
 
-    public void setIngredientIds(List<Integer> ingredientIds) {
-        this.ingredientIds = ingredientIds;
+    public void setIngredients(List<IngredientAmount> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public static class IngredientAmount {
+        private Integer ingredientId;
+        private Double amount;
+
+        public Integer getIngredientId() {
+            return ingredientId;
+        }
+
+        public void setIngredientId(Integer ingredientId) {
+            this.ingredientId = ingredientId;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
     }
 }
