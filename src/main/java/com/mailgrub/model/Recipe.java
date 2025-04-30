@@ -1,6 +1,8 @@
 package com.mailgrub.model;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -12,15 +14,9 @@ public class Recipe {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "recipe_ingredients",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
-    )
-    private List<Ingredient> ingredients;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<RecipeIngredient> recipeIngredients;
 
-    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -37,11 +33,17 @@ public class Recipe {
         this.name = name;
     }
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
+    public List<RecipeIngredient> getRecipeIngredients() {
+        return recipeIngredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
+    }
+
+    public BigDecimal getTotalCost() {
+        return recipeIngredients.stream()
+                .map(RecipeIngredient::getTotalCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

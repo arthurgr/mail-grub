@@ -1,20 +1,19 @@
 package com.mailgrub.controller;
 
-import com.mailgrub.dto.RecipeRequest;
-import com.mailgrub.dto.RecipeUpdateRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.mailgrub.model.Recipe;
-import com.mailgrub.model.Ingredient;
-import com.mailgrub.repository.IngredientRepository;
-import com.mailgrub.repository.RecipeRepository;
-
 import com.mailgrub.dto.PagedResponse;
 import com.mailgrub.dto.PagedResponse.Meta;
+import com.mailgrub.dto.RecipeRequest;
+import com.mailgrub.dto.RecipeResponse;
+import com.mailgrub.model.Ingredient;
+import com.mailgrub.model.Recipe;
+import com.mailgrub.model.RecipeIngredient;
+import com.mailgrub.repository.IngredientRepository;
+import com.mailgrub.repository.RecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,12 +28,33 @@ public class RecipeController {
     private IngredientRepository ingredientRepository;
 
     @GetMapping
-    public @ResponseBody PagedResponse<Recipe> getAllRecipes(
+    public @ResponseBody PagedResponse<RecipeResponse> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> pageResult = recipeRepository.findAll(pageable);
+
+        List<RecipeResponse> content = pageResult.getContent().stream().map(recipe -> {
+            List<RecipeResponse.IngredientEntry> ingredients = recipe.getRecipeIngredients().stream().map(ri -> {
+                Ingredient ing = ri.getIngredient();
+                return new RecipeResponse.IngredientEntry(
+                        ing.getId(),
+                        ing.getName(),
+                        ing.getMeasurementType().name(),
+                        ing.getPurchaseSize(),
+                        ing.getAverageCost().doubleValue(),
+                        ri.getAmount()
+                );
+            }).toList();
+
+            RecipeResponse response = new RecipeResponse();
+            response.setId(recipe.getId());
+            response.setName(recipe.getName());
+            response.setIngredients(ingredients);
+            response.setTotalCost(recipe.getTotalCost());
+            return response;
+        }).toList();
 
         Meta meta = new Meta(
                 pageResult.getNumber(),
@@ -44,7 +64,7 @@ public class RecipeController {
                 pageResult.isLast()
         );
 
-        return new PagedResponse<>(pageResult.getContent(), meta);
+        return new PagedResponse<>(content, meta);
     }
 
     @PostMapping("/add")
@@ -56,29 +76,43 @@ public class RecipeController {
         Recipe recipe = new Recipe();
         recipe.setName(request.getName().trim());
 
-        if (request.getIngredientIds() != null && !request.getIngredientIds().isEmpty()) {
-            List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(request.getIngredientIds());
-            recipe.setIngredients(ingredients);
-        }
+        List<RecipeIngredient> recipeIngredients = request.getIngredients().stream().map(entry -> {
+            Ingredient ingredient = ingredientRepository.findById(entry.getIngredientId()).orElseThrow();
+            RecipeIngredient ri = new RecipeIngredient();
+            ri.setRecipe(recipe);
+            ri.setIngredient(ingredient);
+            ri.setAmount(entry.getAmount());
+            return ri;
+        }).toList();
 
+        recipe.setRecipeIngredients(recipeIngredients);
         recipeRepository.save(recipe);
         return "Recipe saved";
     }
 
-
     @PatchMapping("/update/{id}")
     public @ResponseBody String updateRecipe(
             @PathVariable Integer id,
-            @RequestBody RecipeUpdateRequest updateRequest
+            @RequestBody RecipeRequest updateRequest
     ) {
         return recipeRepository.findById(id).map(recipe -> {
             if (updateRequest.getName() != null && !updateRequest.getName().trim().isEmpty()) {
                 recipe.setName(updateRequest.getName().trim());
             }
 
-            if (updateRequest.getIngredientIds() != null && !updateRequest.getIngredientIds().isEmpty()) {
-                List<Ingredient> ingredients = (List<Ingredient>) ingredientRepository.findAllById(updateRequest.getIngredientIds());
-                recipe.setIngredients(ingredients);
+            if (updateRequest.getIngredients() != null && !updateRequest.getIngredients().isEmpty()) {
+                recipe.getRecipeIngredients().clear();
+
+                List<RecipeIngredient> updatedIngredients = updateRequest.getIngredients().stream().map(entry -> {
+                    Ingredient ingredient = ingredientRepository.findById(entry.getIngredientId()).orElseThrow();
+                    RecipeIngredient ri = new RecipeIngredient();
+                    ri.setRecipe(recipe);
+                    ri.setIngredient(ingredient);
+                    ri.setAmount(entry.getAmount());
+                    return ri;
+                }).toList();
+
+                recipe.getRecipeIngredients().addAll(updatedIngredients);
             }
 
             recipeRepository.save(recipe);
@@ -94,5 +128,4 @@ public class RecipeController {
         recipeRepository.deleteById(id);
         return "Recipe deleted";
     }
-
 }
