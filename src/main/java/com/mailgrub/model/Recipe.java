@@ -1,23 +1,21 @@
 package com.mailgrub.model;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
 @Entity
 public class Recipe {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
 
     private Integer itemsMade;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients;
 
     public Integer getId() {
@@ -53,9 +51,12 @@ public class Recipe {
     }
 
     public BigDecimal getTotalCost() {
+        if (recipeIngredients == null) return BigDecimal.ZERO;
         return recipeIngredients.stream()
-                .map(RecipeIngredient::getTotalCost)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(ri -> ri.getIngredient().getCostPerOunce()
+                        .multiply(BigDecimal.valueOf(ri.getAmount())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getCostPerItem() {
