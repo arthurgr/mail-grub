@@ -7,16 +7,15 @@ import java.math.RoundingMode;
 
 @Entity
 public class RecipeIngredient {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
@@ -55,9 +54,10 @@ public class RecipeIngredient {
     }
 
     public BigDecimal getTotalCost() {
-        if (ingredient == null || amount == null || amount == 0) {
+        if (ingredient == null || amount == null) {
             return BigDecimal.ZERO;
         }
+
         return ingredient.getCostPerOunce()
                 .multiply(BigDecimal.valueOf(amount))
                 .setScale(2, RoundingMode.HALF_UP);

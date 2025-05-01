@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.model.MeasurementType;
 import com.mailgrub.repository.IngredientRepository;
-import com.mailgrub.repository.RecipeRepository;
+import com.mailgrub.repository.RecipeIngredientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,11 @@ public class IngredientControllerTest {
     private IngredientRepository ingredientRepository;
 
     @Autowired
-    private RecipeRepository recipeRepository;
+    private RecipeIngredientRepository recipeIngredientRepository;
 
     @BeforeEach
     void setup() {
-        recipeRepository.deleteAll();
+        recipeIngredientRepository.deleteAll();
         ingredientRepository.deleteAll();
     }
 
