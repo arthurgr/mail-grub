@@ -4,12 +4,15 @@ import com.mailgrub.dto.PagedResponse;
 import com.mailgrub.dto.PagedResponse.Meta;
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.repository.IngredientRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Ingredients", description = "Manage recipe ingredients")
 @RestController
 @RequestMapping(path = "/ingredients")
 public class IngredientController {
@@ -17,6 +20,7 @@ public class IngredientController {
     @Autowired
     private IngredientRepository ingredientRepository;
 
+    @Operation(summary = "Get paginated list of ingredients")
     @GetMapping
     public @ResponseBody PagedResponse<Ingredient> getIngredients(
             @RequestParam(required = false) String name,
@@ -40,12 +44,14 @@ public class IngredientController {
         return new PagedResponse<>(pageResult.getContent(), meta);
     }
 
+    @Operation(summary = "Add a new ingredient")
     @PostMapping(path = "/add")
     public @ResponseBody String addNewIngredient(@RequestBody Ingredient ingredient) {
         ingredientRepository.save(ingredient);
         return "Ingredient Saved";
     }
 
+    @Operation(summary = "Delete an ingredient by ID")
     @DeleteMapping(path = "/delete/{id}")
     public @ResponseBody String deleteIngredient(@PathVariable Integer id) {
         if (!ingredientRepository.existsById(id)) {
@@ -55,6 +61,7 @@ public class IngredientController {
         return "Ingredient deleted";
     }
 
+    @Operation(summary = "Update an ingredient by ID")
     @PatchMapping(path = "/update/{id}")
     public @ResponseBody String updateIngredient(@PathVariable Integer id, @RequestBody Ingredient updatedIngredient) {
         return ingredientRepository.findById(id).map(ingredient -> {
