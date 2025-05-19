@@ -21,6 +21,8 @@ public class RecipeIngredient {
 
     private Double amount;
 
+    private String overrideMeasurementType; // New field
+
     public Integer getId() {
         return id;
     }
@@ -51,6 +53,14 @@ public class RecipeIngredient {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getOverrideMeasurementType() {
+        return overrideMeasurementType;
+    }
+
+    public void setOverrideMeasurementType(String overrideMeasurementType) {
+        this.overrideMeasurementType = overrideMeasurementType;
     }
 
     public BigDecimal getTotalCost() {
