@@ -34,6 +34,7 @@ public class RecipeRequest {
     public static class IngredientAmount {
         private Integer ingredientId;
         private Double amount;
+        private String overrideMeasurementType;
 
         public Integer getIngredientId() {
             return ingredientId;
@@ -49,6 +50,14 @@ public class RecipeRequest {
 
         public void setAmount(Double amount) {
             this.amount = amount;
+        }
+
+        public String getOverrideMeasurementType() {
+            return overrideMeasurementType;
+        }
+
+        public void setOverrideMeasurementType(String overrideMeasurementType) {
+            this.overrideMeasurementType = overrideMeasurementType;
         }
     }
 }

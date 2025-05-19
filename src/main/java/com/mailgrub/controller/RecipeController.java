@@ -48,7 +48,8 @@ public class RecipeController {
                         ing.getMeasurementType().name(),
                         ing.getPurchaseSize(),
                         ing.getAverageCost().doubleValue(),
-                        ri.getAmount()
+                        ri.getAmount(),
+                        ri.getOverrideMeasurementType()
                 );
             }).toList();
 
@@ -90,6 +91,7 @@ public class RecipeController {
             ri.setRecipe(recipe);
             ri.setIngredient(ingredient);
             ri.setAmount(entry.getAmount());
+            ri.setOverrideMeasurementType(entry.getOverrideMeasurementType());
             return ri;
         }).toList();
 
@@ -122,6 +124,7 @@ public class RecipeController {
                     ri.setRecipe(recipe);
                     ri.setIngredient(ingredient);
                     ri.setAmount(entry.getAmount());
+                    ri.setOverrideMeasurementType(entry.getOverrideMeasurementType());
                     return ri;
                 }).toList();
 
