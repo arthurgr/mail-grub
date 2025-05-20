@@ -11,3 +11,7 @@ Environment variables to run project locally:
 - APP_CORS_ALLOWED_ORIGINS=http://localhost:5173
 
 You must have Docker running in order for application to correctly create DB
+
+For Open Api/Swagger Documentation locally, when app is running visit:
+
+http://localhost:8080/swagger-ui/index.html#/
