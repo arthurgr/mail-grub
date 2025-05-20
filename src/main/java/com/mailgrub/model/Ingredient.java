@@ -3,6 +3,8 @@ package com.mailgrub.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Ingredient {
@@ -17,6 +19,7 @@ public class Ingredient {
 
     private Double purchaseSize;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
     private BigDecimal averageCost;
 
     public Integer getId() {
@@ -59,6 +62,8 @@ public class Ingredient {
         this.averageCost = averageCost.setScale(2, RoundingMode.HALF_UP);
     }
 
+    @JsonProperty("costPerOunce")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
     public BigDecimal getCostPerOunce() {
         if (purchaseSize == null || purchaseSize == 0 || averageCost == null) {
             return BigDecimal.ZERO;

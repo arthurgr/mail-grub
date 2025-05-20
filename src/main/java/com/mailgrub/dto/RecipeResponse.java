@@ -3,11 +3,15 @@ package com.mailgrub.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class RecipeResponse {
     private Integer id;
     private String name;
     private List<IngredientEntry> ingredients;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
     private BigDecimal totalCost;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
     private BigDecimal costPerItem;
     private Integer itemsMade;
 
