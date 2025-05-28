@@ -1,10 +1,14 @@
 services:
-  mysql:
-    image: 'mysql:latest'
+  postgres:
+    image: postgres:latest
     environment:
-      - 'MYSQL_DATABASE=${MYSQL_DATABASE}'
-      - 'MYSQL_PASSWORD=${MYSQL_PASSWORD}'
-      - 'MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}'
-      - 'MYSQL_USER=${MYSQL_USER}'
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - '3306'
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
