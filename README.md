@@ -22,3 +22,31 @@ You must have Docker running in order for application to correctly create DB
 For Open Api/Swagger Documentation locally, when app is running visit:
 
 http://localhost:8080/swagger-ui/index.html#/
+
+Example Curl Calls for testing:
+
+curl -s "http://localhost:8080/ingredients?page=0&size=10"
+
+curl -X POST http://localhost:8080/ingredients/add \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Flour", "purchaseSize": 80, "averageCost": 12.99, "measurementType": "OZ"}'
+
+curl -s "http://localhost:8080/recipes?page=0&size=10"
+
+curl -X POST http://localhost:8080/recipes \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Chocolate Chip Cookies",
+        "itemsMade": 24,
+        "recipeIngredients": [
+        {
+            "ingredient": { "id": 1 },
+            "amount": 8.0,
+            "overrideMeasurementType": "OZ"
+          },
+          {
+            "ingredient": { "id": 2 },
+            "amount": 4.0
+          }
+        ]
+      }'
