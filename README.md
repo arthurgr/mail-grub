@@ -31,6 +31,16 @@ curl -X POST http://localhost:8080/ingredients/add \
   -H "Content-Type: application/json" \
   -d '{"name": "Flour", "purchaseSize": 80, "averageCost": 12.99, "measurementType": "OZ"}'
 
+curl -X PUT http://localhost:8080/ingredients/update/2 \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Brown Sugar",
+        "measurementType": "LB",
+        "purchaseSize": 2.0,
+        "averageCost": 4.99
+      }'
+
+
 curl -s "http://localhost:8080/recipes?page=0&size=10"
 
 curl -X POST http://localhost:8080/recipes \
@@ -47,6 +57,24 @@ curl -X POST http://localhost:8080/recipes \
           {
             "ingredient": { "id": 2 },
             "amount": 4.0
+          }
+        ]
+      }'
+
+curl -X PUT http://localhost:8080/recipes/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Updated Cookie Recipe",
+        "itemsMade": 30,
+        "recipeIngredients": [
+          {
+            "ingredient": { "id": 1 },
+            "amount": 10.0,
+            "overrideMeasurementType": "OZ"
+          },
+          {
+            "ingredient": { "id": 3 },
+            "amount": 5.0
           }
         ]
       }'
