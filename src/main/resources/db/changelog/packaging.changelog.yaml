@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: arevelski
+      changes:
+        - createTable:
+            tableName: packaging
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: packaging_materials
+                  type: text
+              - column:
+                  name: average_cost
+                  type: numeric(10,2)
+              - column:
+                  name: quantity
+                  type: integer
+              - column:
+                  name: cost_per_unit
+                  type: numeric(10,2)
+              - column:
+                  name: procurement
+                  type: text
