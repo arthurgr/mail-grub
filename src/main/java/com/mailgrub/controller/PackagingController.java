@@ -12,6 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Tag(name = "Packaging", description = "Manage packaging materials")
 @RestController
 @RequestMapping(path = "/packaging")
@@ -44,9 +47,14 @@ public class PackagingController {
         return new PagedResponse<>(pageResult.getContent(), meta);
     }
 
-    @Operation(summary = "Add new packaging material")
     @PostMapping(path = "/add")
     public @ResponseBody String addNewPackaging(@RequestBody Packaging packaging) {
+        if (packaging.getAverageCost() != null && packaging.getQuantity() != null && packaging.getQuantity() != 0) {
+            BigDecimal costPerUnit = packaging.getAverageCost()
+                    .divide(BigDecimal.valueOf(packaging.getQuantity()), 4, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP);
+            packaging.setCostPerUnit(costPerUnit);
+        }
         packagingRepository.save(packaging);
         return "Packaging Saved";
     }
@@ -68,7 +76,6 @@ public class PackagingController {
             if (updatedPackaging.getPackagingMaterials() != null) packaging.setPackagingMaterials(updatedPackaging.getPackagingMaterials());
             if (updatedPackaging.getAverageCost() != null) packaging.setAverageCost(updatedPackaging.getAverageCost());
             if (updatedPackaging.getQuantity() != null) packaging.setQuantity(updatedPackaging.getQuantity());
-            if (updatedPackaging.getCostPerUnit() != null) packaging.setCostPerUnit(updatedPackaging.getCostPerUnit());
             if (updatedPackaging.getProcurement() != null) packaging.setProcurement(updatedPackaging.getProcurement());
             packagingRepository.save(packaging);
             return "Packaging updated";
