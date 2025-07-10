@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: arevelski
+      changes:
+        - createTable:
+            tableName: taxes
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: jurisdiction
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tax_rate
+                  type: numeric(5,4)
+                  constraints:
+                    nullable: false
