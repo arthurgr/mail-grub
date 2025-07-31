@@ -71,9 +71,11 @@ public class Packaging {
     }
 
     public BigDecimal getCostPerUnit() {
-        return costPerUnit == null
-                ? BigDecimal.ZERO
-                : costPerUnit.setScale(2, RoundingMode.HALF_UP);
+        if (averageCost == null || quantity == null || quantity == 0) {
+            return BigDecimal.ZERO;
+        }
+        return averageCost
+                .divide(BigDecimal.valueOf(quantity), 2, RoundingMode.HALF_UP);
     }
 
     public void setCostPerUnit(BigDecimal costPerUnit) {

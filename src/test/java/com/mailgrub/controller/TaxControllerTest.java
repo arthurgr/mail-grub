@@ -1,52 +1,56 @@
 package com.mailgrub.controller;
-
 import com.mailgrub.model.Tax;
 import com.mailgrub.repository.TaxRepository;
-import com.mailgrub.dto.PagedResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TaxControllerTest.MockConfig.class)
-class TaxControllerTest {
-
-    @TestConfiguration
-    static class MockConfig {
-        @Bean
-        public TaxRepository taxRepository() {
-            Tax tax = new Tax();
-            tax.setId(1);
-            tax.setJurisdiction("Colorado");
-            tax.setTaxRate(0.0825);
-
-            Page<Tax> page = new PageImpl<>(List.of(tax), PageRequest.of(0, 10), 1);
-            TaxRepository mockRepo = Mockito.mock(TaxRepository.class);
-            Mockito.when(mockRepo.findAll(Mockito.any(Pageable.class))).thenReturn(page);
-
-            return mockRepo;
-        }
-    }
+@SpringBootTest
+@AutoConfigureMockMvc
+public class TaxControllerTest {
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private MockMvc mockMvc;
+
+    @Autowired
+    private TaxRepository taxRepository;
+
+    @BeforeEach
+    void setup() {
+        taxRepository.deleteAll();
+
+        Tax tax = new Tax();
+        tax.setJurisdiction("Colorado");
+        tax.setTaxRate(0.0825);
+        taxRepository.save(tax);
+    }
 
     @Test
-    void testGetTaxes() {
-        ResponseEntity<PagedResponse> response = restTemplate.getForEntity("/taxes", PagedResponse.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    void testGetTaxes() throws Exception {
+        mockMvc.perform(get("/taxes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].jurisdiction").value("Colorado"));
+    }
+
+    @Test
+    void testAddTax() throws Exception {
+        Tax newTax = new Tax();
+        newTax.setJurisdiction("Wyoming");
+        newTax.setTaxRate(0.05);
+
+        mockMvc.perform(post("/taxes/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(newTax)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Tax record saved"));
     }
 }
+
