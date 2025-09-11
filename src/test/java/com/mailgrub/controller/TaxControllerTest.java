@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.math.BigDecimal;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,7 +32,7 @@ public class TaxControllerTest {
 
         Tax tax = new Tax();
         tax.setJurisdiction("Colorado");
-        tax.setTaxRate(0.0825);
+        tax.setTaxRate(BigDecimal.valueOf(0.0825));
         taxRepository.save(tax);
     }
 
@@ -44,7 +47,7 @@ public class TaxControllerTest {
     void testAddTax() throws Exception {
         Tax newTax = new Tax();
         newTax.setJurisdiction("Wyoming");
-        newTax.setTaxRate(0.05);
+        newTax.setTaxRate(BigDecimal.valueOf(0.05));
 
         mockMvc.perform(post("/taxes/add")
                         .contentType(MediaType.APPLICATION_JSON)
