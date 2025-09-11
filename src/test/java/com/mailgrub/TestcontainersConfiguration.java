@@ -9,10 +9,9 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
 
-	@Bean
-	@ServiceConnection
-	PostgreSQLContainer<?> mysqlContainer() {
-		return new PostgreSQLContainer<>(DockerImageName.parse("mysql:latest"));
-	}
-
+  @Bean
+  @ServiceConnection
+  PostgreSQLContainer<?> mysqlContainer() {
+    return new PostgreSQLContainer<>(DockerImageName.parse("mysql:latest"));
+  }
 }
