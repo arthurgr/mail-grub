@@ -7,60 +7,60 @@ import java.util.List;
 
 @Entity
 public class Recipe {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    private String name;
+  private String name;
 
-    private Integer itemsMade;
+  private Integer itemsMade;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RecipeIngredient> recipeIngredients;
+  @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RecipeIngredient> recipeIngredients;
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public Integer getItemsMade() {
-        return itemsMade;
-    }
+  public Integer getItemsMade() {
+    return itemsMade;
+  }
 
-    public void setItemsMade(Integer itemsMade) {
-        this.itemsMade = itemsMade;
-    }
+  public void setItemsMade(Integer itemsMade) {
+    this.itemsMade = itemsMade;
+  }
 
-    public List<RecipeIngredient> getRecipeIngredients() {
-        return recipeIngredients;
-    }
+  public List<RecipeIngredient> getRecipeIngredients() {
+    return recipeIngredients;
+  }
 
-    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
-        this.recipeIngredients = recipeIngredients;
-    }
+  public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+    this.recipeIngredients = recipeIngredients;
+  }
 
-    public BigDecimal getTotalCost() {
-        if (recipeIngredients == null) return BigDecimal.ZERO;
-        return recipeIngredients.stream()
-                .map(ri -> ri.getIngredient().getCostPerOunce()
-                        .multiply(BigDecimal.valueOf(ri.getAmount())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
+  public BigDecimal getTotalCost() {
+    if (recipeIngredients == null) return BigDecimal.ZERO;
+    return recipeIngredients.stream()
+        .map(
+            ri -> ri.getIngredient().getCostPerOunce().multiply(BigDecimal.valueOf(ri.getAmount())))
+        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        .setScale(2, RoundingMode.HALF_UP);
+  }
 
-    public BigDecimal getCostPerItem() {
-        if (itemsMade == null || itemsMade == 0) return BigDecimal.ZERO;
-        return getTotalCost().divide(BigDecimal.valueOf(itemsMade), 2, RoundingMode.HALF_UP);
-    }
+  public BigDecimal getCostPerItem() {
+    if (itemsMade == null || itemsMade == 0) return BigDecimal.ZERO;
+    return getTotalCost().divide(BigDecimal.valueOf(itemsMade), 2, RoundingMode.HALF_UP);
+  }
 }
