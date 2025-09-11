@@ -2,6 +2,8 @@ package com.mailgrub.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "taxes")
 public class Tax {
@@ -12,7 +14,7 @@ public class Tax {
 
     private String jurisdiction;
 
-    private Double taxRate;
+    private BigDecimal taxRate;
 
     public Integer getId() {
         return id;
@@ -30,11 +32,11 @@ public class Tax {
         this.jurisdiction = jurisdiction;
     }
 
-    public Double getTaxRate() {
+    public BigDecimal getTaxRate() {
         return taxRate;
     }
 
-    public void setTaxRate(Double taxRate) {
+    public void setTaxRate(BigDecimal taxRate) {
         this.taxRate = taxRate;
     }
 }
