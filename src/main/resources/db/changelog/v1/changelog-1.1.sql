@@ -1,8 +1,8 @@
 -- liquibase formatted sql
--- changeset arevelski:1.0
+-- changeset arevelski:1.1
 
-CREATE TABLE taxes (
-    id SERIAL PRIMARY KEY NOT NULL,
-    jurisdiction TEXT NOT NULL,
-    tax_rate NUMERIC(5,4) NOT NULL
+CREATE TABLE recipe (
+    id          SERIAL PRIMARY KEY NOT NULL,
+    name        TEXT,
+    items_made  INTEGER
 );
