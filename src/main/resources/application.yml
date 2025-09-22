@@ -33,6 +33,13 @@ logging:
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  ratelimit:
+    enabled: true
+    capacity: 100
+    refill-tokens: 100
+    refill-period: 1m
+    key-strategy: ip
+    exclude-paths: [ /actuator/health, /v3/api-docs/**, /swagger-ui/** ]
 
 com:
   mailgrub:
