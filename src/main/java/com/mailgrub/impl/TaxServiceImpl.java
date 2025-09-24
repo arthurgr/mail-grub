@@ -1,15 +1,17 @@
 package com.mailgrub.impl;
+
 import com.mailgrub.model.Tax;
 import com.mailgrub.repository.TaxRepository;
 import com.mailgrub.service.TaxService;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TaxServiceImpl implements TaxService {
 
     private final TaxRepository repo;
@@ -19,35 +21,45 @@ public class TaxServiceImpl implements TaxService {
     }
 
     @Override
-    @Cacheable(cacheNames = "taxSearch",
-            key = "T(java.util.Objects).hash(#jurisdiction, #pageable.pageNumber, #pageable.pageSize)")
-    public Page<Tax> find(String jurisdiction, Pageable pageable) {
-        return repo.findByJurisdictionContainingIgnoreCase(jurisdiction, pageable);
+    @Cacheable(
+            cacheNames = "taxes",
+            key = "#tenantId + ':' + (#jurisdiction == null ? '' : #jurisdiction) + ':' + #page + ':' + #size"
+    )
+    public Page<Tax> findPage(String tenantId, String jurisdiction, int page, int size) {
+        var pageable = PageRequest.of(page, size);
+        if (jurisdiction == null || jurisdiction.isBlank()) {
+            return repo.findByTenantId(tenantId, pageable);
+        }
+        return repo.findByTenantIdAndJurisdictionContainingIgnoreCase(tenantId, jurisdiction, pageable);
     }
 
     @Override
-    @Cacheable(cacheNames = "taxSearch",
-            key = "T(java.util.Objects).hash('ALL', #pageable.pageNumber, #pageable.pageSize)")
-    public Page<Tax> findAll(Pageable pageable) {
-        return repo.findAll(pageable);
+    @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
+    public Tax create(String tenantId, Tax in) {
+        in.setId(null);
+        in.setTenantId(tenantId);
+        return repo.save(in);
     }
 
     @Override
-    @Cacheable(cacheNames = "taxById", key = "#id")
-    public Tax getById(Integer id) {
-        return repo.findById(id).orElse(null);
+    @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
+    public Tax update(String tenantId, Integer id, Tax patch) {
+        var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
+        if (!tenantId.equals(existing.getTenantId())) {
+            throw new IllegalArgumentException("Wrong tenant for entity");
+        }
+        if (patch.getJurisdiction() != null) existing.setJurisdiction(patch.getJurisdiction());
+        if (patch.getTaxRate() != null) existing.setTaxRate(patch.getTaxRate());
+        return repo.save(existing);
     }
 
     @Override
-    @CachePut(cacheNames = "taxById", key = "#result.id", unless = "#result == null")
-    @CacheEvict(cacheNames = "taxSearch", allEntries = true)
-    public Tax save(Tax tax) {
-        return repo.save(tax);
-    }
-
-    @Override
-    @CacheEvict(cacheNames = { "taxById", "taxSearch" }, allEntries = true)
-    public void deleteById(Integer id) {
+    @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
+    public void delete(String tenantId, Integer id) {
+        var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
+        if (!tenantId.equals(existing.getTenantId())) {
+            throw new IllegalArgumentException("Wrong tenant for entity");
+        }
         repo.deleteById(id);
     }
 }
