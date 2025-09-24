@@ -1,15 +1,17 @@
-package com.mailgrub.service;
+package com.mailgrub.impl;
 
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.repository.IngredientRepository;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import com.mailgrub.service.IngredientService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Service
+@Transactional
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientRepository repo;
@@ -19,33 +21,46 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    @Cacheable(cacheNames = "ingredientsSearch", key = "T(java.util.Objects).hash(#name, #pageable.pageNumber, #pageable.pageSize)")
-    public Page<Ingredient> find(String name, Pageable pageable) {
-        return repo.findByNameContainingIgnoreCase(name, pageable);
+    @Cacheable(value = "ingredients", key = "#tenantId + ':' + #name + ':' + #page + ':' + #size")
+    public Page<Ingredient> findPage(String tenantId, String name, int page, int size) {
+        var pageable = PageRequest.of(page, size);
+        if (name == null || name.isBlank()) {
+            return repo.findByTenantId(tenantId, pageable);
+        }
+        return repo.findByTenantIdAndNameContainingIgnoreCase(tenantId, name, pageable);
     }
 
     @Override
-    @Cacheable(cacheNames = "ingredientsSearch", key = "T(java.util.Objects).hash('ALL', #pageable.pageNumber, #pageable.pageSize)")
-    public Page<Ingredient> findAll(Pageable pageable) {
-        return repo.findAll(pageable);
+    @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
+    public Ingredient create(String tenantId, Ingredient in) {
+        in.setId(null);
+        in.setTenantId(tenantId);
+        return repo.save(in);
     }
 
     @Override
-    @Cacheable(cacheNames = "ingredientsById", key = "#id")
-    public Ingredient getById(Integer id) {
-        return repo.findById(id).orElse(null);
+    @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
+    public Ingredient update(String tenantId, Integer id, Ingredient patch) {
+        var existing = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Not found"));
+        if (!tenantId.equals(existing.getTenantId())) {
+            throw new IllegalArgumentException("Wrong tenant for entity");
+        }
+        existing.setName(patch.getName());
+        existing.setMeasurementType(patch.getMeasurementType());
+        existing.setPurchaseSize(patch.getPurchaseSize());
+        existing.setAverageCost(patch.getAverageCost());
+        return repo.save(existing);
     }
 
     @Override
-    @CachePut(cacheNames = "ingredientsById", key = "#result.id", unless = "#result == null")
-    @CacheEvict(cacheNames = "ingredientsSearch", allEntries = true)
-    public Ingredient save(Ingredient ingredient) {
-        return repo.save(ingredient);
-    }
-
-    @Override
-    @CacheEvict(cacheNames = {"ingredientsById", "ingredientsSearch"}, allEntries = true)
-    public void deleteById(Integer id) {
+    @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
+    public void delete(String tenantId, Integer id) {
+        var existing = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Not found"));
+        if (!tenantId.equals(existing.getTenantId())) {
+            throw new IllegalArgumentException("Wrong tenant for entity");
+        }
         repo.deleteById(id);
     }
 }

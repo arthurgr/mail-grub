@@ -7,8 +7,11 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface IngredientRepository
-    extends ListCrudRepository<Ingredient, Integer>,
+        extends ListCrudRepository<Ingredient, Integer>,
         PagingAndSortingRepository<Ingredient, Integer> {
 
-  Page<Ingredient> findByNameContainingIgnoreCase(String name, Pageable pageable);
+  Page<Ingredient> findByTenantIdAndNameContainingIgnoreCase(
+          String tenantId, String name, Pageable pageable);
+
+  Page<Ingredient> findByTenantId(String tenantId, Pageable pageable);
 }
