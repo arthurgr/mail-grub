@@ -7,10 +7,15 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Entity
+@Table(name = "ingredient")
 public class Ingredient {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
+
+  @Column(name = "tenant_id", nullable = false, updatable = false)
+  private String tenantId; // <--- add this field
 
   private String name;
 
@@ -28,6 +33,14 @@ public class Ingredient {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
   }
 
   public String getName() {
@@ -55,11 +68,11 @@ public class Ingredient {
   }
 
   public BigDecimal getAverageCost() {
-    return averageCost.setScale(2, RoundingMode.HALF_UP);
+    return averageCost == null ? null : averageCost.setScale(2, RoundingMode.HALF_UP);
   }
 
   public void setAverageCost(BigDecimal averageCost) {
-    this.averageCost = averageCost.setScale(2, RoundingMode.HALF_UP);
+    this.averageCost = averageCost == null ? null : averageCost.setScale(2, RoundingMode.HALF_UP);
   }
 
   @JsonProperty("costPerOunce")

@@ -6,13 +6,16 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Entity
+@Table(name = "recipe")
 public class Recipe {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private String name;
+  @Column(name = "tenant_id", nullable = false, updatable = false)
+  private String tenantId;
 
+  private String name;
   private Integer itemsMade;
 
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -24,6 +27,14 @@ public class Recipe {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
   }
 
   public String getName() {
