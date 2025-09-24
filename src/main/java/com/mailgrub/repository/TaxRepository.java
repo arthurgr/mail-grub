@@ -10,5 +10,5 @@ public interface TaxRepository extends JpaRepository<Tax, Integer> {
   Page<Tax> findByTenantId(String tenantId, Pageable pageable);
 
   Page<Tax> findByTenantIdAndJurisdictionContainingIgnoreCase(
-          String tenantId, String jurisdiction, Pageable pageable);
+      String tenantId, String jurisdiction, Pageable pageable);
 }

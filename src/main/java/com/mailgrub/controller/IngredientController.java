@@ -1,9 +1,9 @@
 package com.mailgrub.controller;
 
+import com.mailgrub.dto.PagedResponse;
 import com.mailgrub.dto.TenantPageRequest;
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.service.IngredientService;
-import com.mailgrub.dto.PagedResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +19,7 @@ public class IngredientController {
   @GetMapping
   public PagedResponse<Ingredient> list(TenantPageRequest req) {
     return PagedResponse.fromPage(
-            service.findPage(req.getTenantId(), req.getName(), req.getPage(), req.getSize())
-    );
+        service.findPage(req.getTenantId(), req.getName(), req.getPage(), req.getSize()));
   }
 
   @PostMapping
@@ -30,10 +29,7 @@ public class IngredientController {
 
   @PatchMapping("/{id}")
   public Ingredient update(
-          @PathVariable String tenantId,
-          @PathVariable Integer id,
-          @RequestBody Ingredient patch
-  ) {
+      @PathVariable String tenantId, @PathVariable Integer id, @RequestBody Ingredient patch) {
     return service.update(tenantId, id, patch);
   }
 

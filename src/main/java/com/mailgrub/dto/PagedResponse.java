@@ -1,7 +1,7 @@
 package com.mailgrub.dto;
 
-import org.springframework.data.domain.Page;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public class PagedResponse<T> {
   private final List<T> content;
@@ -21,13 +21,13 @@ public class PagedResponse<T> {
   }
 
   public static <T> PagedResponse<T> fromPage(Page<T> page) {
-    Meta meta = new Meta(
+    Meta meta =
+        new Meta(
             page.getNumber(),
             page.getSize(),
             page.getTotalElements(),
             page.getTotalPages(),
-            page.isLast()
-    );
+            page.isLast());
     return new PagedResponse<>(page.getContent(), meta);
   }
 }

@@ -15,7 +15,7 @@ public class Ingredient {
   private Integer id;
 
   @Column(name = "tenant_id", nullable = false, updatable = false)
-  private String tenantId;  // <--- add this field
+  private String tenantId; // <--- add this field
 
   private String name;
 
@@ -90,7 +90,7 @@ public class Ingredient {
     }
 
     return averageCost
-            .divide(purchaseSizeInOunces, 4, RoundingMode.HALF_UP)
-            .setScale(2, RoundingMode.HALF_UP);
+        .divide(purchaseSizeInOunces, 4, RoundingMode.HALF_UP)
+        .setScale(2, RoundingMode.HALF_UP);
   }
 }

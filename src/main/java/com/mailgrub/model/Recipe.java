@@ -21,27 +21,53 @@ public class Recipe {
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RecipeIngredient> recipeIngredients;
 
-  public Integer getId() { return id; }
-  public void setId(Integer id) { this.id = id; }
+  public Integer getId() {
+    return id;
+  }
 
-  public String getTenantId() { return tenantId; }
-  public void setTenantId(String tenantId) { this.tenantId = tenantId; }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-  public String getName() { return name; }
-  public void setName(String name) { this.name = name; }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-  public Integer getItemsMade() { return itemsMade; }
-  public void setItemsMade(Integer itemsMade) { this.itemsMade = itemsMade; }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-  public List<RecipeIngredient> getRecipeIngredients() { return recipeIngredients; }
-  public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) { this.recipeIngredients = recipeIngredients; }
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Integer getItemsMade() {
+    return itemsMade;
+  }
+
+  public void setItemsMade(Integer itemsMade) {
+    this.itemsMade = itemsMade;
+  }
+
+  public List<RecipeIngredient> getRecipeIngredients() {
+    return recipeIngredients;
+  }
+
+  public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+    this.recipeIngredients = recipeIngredients;
+  }
 
   public BigDecimal getTotalCost() {
     if (recipeIngredients == null) return BigDecimal.ZERO;
     return recipeIngredients.stream()
-            .map(ri -> ri.getIngredient().getCostPerOunce().multiply(BigDecimal.valueOf(ri.getAmount())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            .setScale(2, RoundingMode.HALF_UP);
+        .map(
+            ri -> ri.getIngredient().getCostPerOunce().multiply(BigDecimal.valueOf(ri.getAmount())))
+        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        .setScale(2, RoundingMode.HALF_UP);
   }
 
   public BigDecimal getCostPerItem() {

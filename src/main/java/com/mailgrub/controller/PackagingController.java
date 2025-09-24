@@ -19,8 +19,11 @@ public class PackagingController {
   @GetMapping
   public PagedResponse<Packaging> list(TenantPageRequest req) {
     return PagedResponse.fromPage(
-            service.findPage(req.getTenantId(), req.getName() /* or req.getPackagingMaterials if you prefer a dedicated field */, req.getPage(), req.getSize())
-    );
+        service.findPage(
+            req.getTenantId(),
+            req.getName() /* or req.getPackagingMaterials if you prefer a dedicated field */,
+            req.getPage(),
+            req.getSize()));
   }
 
   @PostMapping
@@ -29,7 +32,8 @@ public class PackagingController {
   }
 
   @PatchMapping("/{id}")
-  public Packaging update(@PathVariable String tenantId, @PathVariable Integer id, @RequestBody Packaging patch) {
+  public Packaging update(
+      @PathVariable String tenantId, @PathVariable Integer id, @RequestBody Packaging patch) {
     return service.update(tenantId, id, patch);
   }
 

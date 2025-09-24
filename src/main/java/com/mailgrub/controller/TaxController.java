@@ -19,8 +19,8 @@ public class TaxController {
   @GetMapping
   public PagedResponse<Tax> list(TenantPageRequest req) {
     return PagedResponse.fromPage(
-            taxService.findPage(req.getTenantId(), req.getJurisdiction(), req.getPage(), req.getSize())
-    );
+        taxService.findPage(
+            req.getTenantId(), req.getJurisdiction(), req.getPage(), req.getSize()));
   }
 
   @PostMapping
@@ -29,7 +29,8 @@ public class TaxController {
   }
 
   @PatchMapping("/{id}")
-  public Tax update(@PathVariable String tenantId, @PathVariable Integer id, @RequestBody Tax patch) {
+  public Tax update(
+      @PathVariable String tenantId, @PathVariable Integer id, @RequestBody Tax patch) {
     return taxService.update(tenantId, id, patch);
   }
 
