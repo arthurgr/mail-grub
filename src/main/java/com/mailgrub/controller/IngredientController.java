@@ -17,9 +17,10 @@ public class IngredientController {
   }
 
   @GetMapping
-  public PagedResponse<Ingredient> list(TenantPageRequest req) {
+  public PagedResponse<Ingredient> list(
+      @RequestParam(required = false) String name, TenantPageRequest req) {
     return PagedResponse.fromPage(
-        service.findPage(req.getTenantId(), req.getName(), req.getPage(), req.getSize()));
+        service.findPage(req.getTenantId(), name, req.getPage(), req.getSize()));
   }
 
   @PostMapping
