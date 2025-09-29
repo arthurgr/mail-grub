@@ -17,13 +17,10 @@ public class PackagingController {
   }
 
   @GetMapping
-  public PagedResponse<Packaging> list(TenantPageRequest req) {
+  public PagedResponse<Packaging> list(
+      @RequestParam(required = false) String name, TenantPageRequest req) {
     return PagedResponse.fromPage(
-        service.findPage(
-            req.getTenantId(),
-            req.getName() /* or req.getPackagingMaterials if you prefer a dedicated field */,
-            req.getPage(),
-            req.getSize()));
+        service.findPage(req.getTenantId(), name, req.getPage(), req.getSize()));
   }
 
   @PostMapping

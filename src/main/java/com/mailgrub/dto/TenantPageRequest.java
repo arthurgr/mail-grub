@@ -30,20 +30,4 @@ public class TenantPageRequest {
   public void setSize(int size) {
     this.size = size;
   }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getJurisdiction() {
-    return jurisdiction;
-  }
-
-  public void setJurisdiction(String jurisdiction) {
-    this.jurisdiction = jurisdiction;
-  }
 }

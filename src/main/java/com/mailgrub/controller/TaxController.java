@@ -17,10 +17,10 @@ public class TaxController {
   }
 
   @GetMapping
-  public PagedResponse<Tax> list(TenantPageRequest req) {
+  public PagedResponse<Tax> list(
+      @RequestParam(required = false) String jurisdiction, TenantPageRequest req) {
     return PagedResponse.fromPage(
-        taxService.findPage(
-            req.getTenantId(), req.getJurisdiction(), req.getPage(), req.getSize()));
+        taxService.findPage(req.getTenantId(), jurisdiction, req.getPage(), req.getSize()));
   }
 
   @PostMapping

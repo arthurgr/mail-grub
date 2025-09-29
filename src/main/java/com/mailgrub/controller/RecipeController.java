@@ -19,9 +19,10 @@ public class RecipeController {
   }
 
   @GetMapping
-  public PagedResponse<RecipeResponse> list(TenantPageRequest req) {
+  public PagedResponse<RecipeResponse> list(
+      @RequestParam(required = false) String name, TenantPageRequest req) {
     return PagedResponse.fromPage(
-        recipeService.findPage(req.getTenantId(), req.getName(), req.getPage(), req.getSize()));
+        recipeService.findPage(req.getTenantId(), name, req.getPage(), req.getSize()));
   }
 
   @PostMapping
