@@ -1,4 +1,4 @@
-package com.mailgrub.impl;
+package com.mailgrub.service.impl;
 
 import com.mailgrub.dto.RecipeRequest;
 import com.mailgrub.dto.RecipeResponse;
