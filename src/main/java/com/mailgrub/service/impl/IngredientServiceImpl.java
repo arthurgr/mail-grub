@@ -1,4 +1,4 @@
-package com.mailgrub.impl;
+package com.mailgrub.service.impl;
 
 import com.mailgrub.model.Ingredient;
 import com.mailgrub.repository.IngredientRepository;
