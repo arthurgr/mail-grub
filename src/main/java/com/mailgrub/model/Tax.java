@@ -1,6 +1,9 @@
 package com.mailgrub.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -16,6 +19,9 @@ public class Tax {
 
   private String jurisdiction;
 
+  @Column(precision = 5, scale = 2, nullable = false)
+  @DecimalMin("0.00")
+  @DecimalMax("100.00")
   private BigDecimal taxRate;
 
   public Integer getId() {
