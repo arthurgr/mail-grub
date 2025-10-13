@@ -24,29 +24,29 @@ public class TaxServiceImpl implements TaxService {
   @Cacheable(
       cacheNames = "taxes",
       key =
-          "#tenantId + ':' + (#jurisdiction == null ? '' : #jurisdiction) + ':' + #page + ':' + #size")
-  public Page<Tax> findPage(String tenantId, String jurisdiction, int page, int size) {
+          "#userId + ':' + (#jurisdiction == null ? '' : #jurisdiction) + ':' + #page + ':' + #size")
+  public Page<Tax> findPage(String userId, String jurisdiction, int page, int size) {
     var pageable = PageRequest.of(page, size);
     if (jurisdiction == null || jurisdiction.isBlank()) {
-      return repo.findByTenantId(tenantId, pageable);
+      return repo.findByUserId(userId, pageable);
     }
-    return repo.findByTenantIdAndJurisdictionContainingIgnoreCase(tenantId, jurisdiction, pageable);
+    return repo.findByUserIdAndJurisdictionContainingIgnoreCase(userId, jurisdiction, pageable);
   }
 
   @Override
-  @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
-  public Tax create(String tenantId, Tax in) {
+  @CacheEvict(cacheNames = "taxes", key = "#userId + ':*'", allEntries = true)
+  public Tax create(String userId, Tax in) {
     in.setId(null);
-    in.setTenantId(tenantId);
+    in.setUserId(userId);
     return repo.save(in);
   }
 
   @Override
-  @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
-  public Tax update(String tenantId, Integer id, Tax patch) {
+  @CacheEvict(cacheNames = "taxes", key = "#userId + ':*'", allEntries = true)
+  public Tax update(String userId, Integer id, Tax patch) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     if (patch.getJurisdiction() != null) existing.setJurisdiction(patch.getJurisdiction());
     if (patch.getTaxRate() != null) existing.setTaxRate(patch.getTaxRate());
@@ -54,11 +54,11 @@ public class TaxServiceImpl implements TaxService {
   }
 
   @Override
-  @CacheEvict(cacheNames = "taxes", key = "#tenantId + ':*'", allEntries = true)
-  public void delete(String tenantId, Integer id) {
+  @CacheEvict(cacheNames = "taxes", key = "#userId + ':*'", allEntries = true)
+  public void delete(String userId, Integer id) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     repo.deleteById(id);
   }

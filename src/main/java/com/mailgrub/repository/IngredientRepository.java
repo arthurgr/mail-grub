@@ -11,10 +11,10 @@ public interface IngredientRepository
     extends ListCrudRepository<Ingredient, Integer>,
         PagingAndSortingRepository<Ingredient, Integer> {
 
-  Page<Ingredient> findByTenantIdAndNameContainingIgnoreCase(
-      String tenantId, String name, Pageable pageable);
+  Page<Ingredient> findByUserIdAndNameContainingIgnoreCase(
+      String userId, String name, Pageable pageable);
 
-  Page<Ingredient> findByTenantId(String tenantId, Pageable pageable);
+  Page<Ingredient> findByUserId(String userId, Pageable pageable);
 
-  Optional<Ingredient> findByIdAndTenantId(Integer id, String tenantId);
+  Optional<Ingredient> findByIdAndUserId(Integer id, String userId);
 }

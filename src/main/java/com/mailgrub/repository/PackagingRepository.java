@@ -9,8 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface PackagingRepository
     extends ListCrudRepository<Packaging, Integer>, PagingAndSortingRepository<Packaging, Integer> {
 
-  Page<Packaging> findByTenantId(String tenantId, Pageable pageable);
+  Page<Packaging> findByUserId(String userId, Pageable pageable);
 
-  Page<Packaging> findByTenantIdAndPackagingMaterialsContainingIgnoreCase(
-      String tenantId, String packagingMaterials, Pageable pageable);
+  Page<Packaging> findByUserIdAndPackagingMaterialsContainingIgnoreCase(
+      String userId, String packagingMaterials, Pageable pageable);
 }

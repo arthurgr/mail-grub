@@ -30,29 +30,29 @@ public class RecipeServiceImpl implements RecipeService {
   @Override
   @Cacheable(
       cacheNames = "recipes",
-      key = "#tenantId + ':' + (#name == null ? '' : #name) + ':' + #page + ':' + #size")
-  public Page<RecipeResponse> findPage(String tenantId, String name, int page, int size) {
+      key = "#userId + ':' + (#name == null ? '' : #name) + ':' + #page + ':' + #size")
+  public Page<RecipeResponse> findPage(String userId, String name, int page, int size) {
     var pageable = PageRequest.of(page, size);
     Page<Recipe> src =
         (name == null || name.isBlank())
-            ? recipeRepository.findByTenantId(tenantId, pageable)
-            : recipeRepository.findByTenantIdAndNameContainingIgnoreCase(tenantId, name, pageable);
+            ? recipeRepository.findByUserId(userId, pageable)
+            : recipeRepository.findByUserIdAndNameContainingIgnoreCase(userId, name, pageable);
     return src.map(this::toResponse);
   }
 
   @Override
-  @Cacheable(cacheNames = "recipeById", key = "#tenantId + ':' + #id")
-  public RecipeResponse getById(String tenantId, Integer id) {
-    return recipeRepository.findByIdAndTenantId(id, tenantId).map(this::toResponse).orElse(null);
+  @Cacheable(cacheNames = "recipeById", key = "#userId + ':' + #id")
+  public RecipeResponse getById(String userId, Integer id) {
+    return recipeRepository.findByIdAndUserId(id, userId).map(this::toResponse).orElse(null);
   }
 
   @Override
   @CacheEvict(
       cacheNames = {"recipes", "recipeById"},
       allEntries = true)
-  public Recipe add(String tenantId, RecipeRequest request) {
+  public Recipe add(String userId, RecipeRequest request) {
     Recipe recipe = new Recipe();
-    recipe.setTenantId(tenantId);
+    recipe.setUserId(userId);
     recipe.setName(request.getName() == null ? null : request.getName().trim());
     recipe.setItemsMade(request.getItemsMade());
 
@@ -60,14 +60,14 @@ public class RecipeServiceImpl implements RecipeService {
         request.getIngredients().stream()
             .map(
                 e -> {
-                  // Enforce ingredient belongs to the same tenant
+                  // Enforce ingredient belongs to the same user
                   Ingredient ing =
                       ingredientRepository
-                          .findByIdAndTenantId(e.getIngredientId(), tenantId)
+                          .findByIdAndUserId(e.getIngredientId(), userId)
                           .orElseThrow(
                               () ->
                                   new IllegalArgumentException(
-                                      "Ingredient not found or wrong tenant"));
+                                      "Ingredient not found or wrong user"));
                   RecipeIngredient ri = new RecipeIngredient();
                   ri.setRecipe(recipe);
                   ri.setIngredient(ing);
@@ -85,9 +85,9 @@ public class RecipeServiceImpl implements RecipeService {
   @CacheEvict(
       cacheNames = {"recipes", "recipeById"},
       allEntries = true)
-  public Recipe update(String tenantId, Integer id, RecipeRequest request) {
+  public Recipe update(String userId, Integer id, RecipeRequest request) {
     return recipeRepository
-        .findByIdAndTenantId(id, tenantId)
+        .findByIdAndUserId(id, userId)
         .map(
             r -> {
               if (request.getName() != null && !request.getName().trim().isEmpty())
@@ -101,11 +101,11 @@ public class RecipeServiceImpl implements RecipeService {
                             e -> {
                               Ingredient ing =
                                   ingredientRepository
-                                      .findByIdAndTenantId(e.getIngredientId(), tenantId)
+                                      .findByIdAndUserId(e.getIngredientId(), userId)
                                       .orElseThrow(
                                           () ->
                                               new IllegalArgumentException(
-                                                  "Ingredient not found or wrong tenant"));
+                                                  "Ingredient not found or wrong user"));
                               RecipeIngredient ri = new RecipeIngredient();
                               ri.setRecipe(r);
                               ri.setIngredient(ing);
@@ -125,10 +125,10 @@ public class RecipeServiceImpl implements RecipeService {
   @CacheEvict(
       cacheNames = {"recipes", "recipeById"},
       allEntries = true)
-  public void deleteById(String tenantId, Integer id) {
-    // Only delete if this recipe belongs to tenant
+  public void deleteById(String userId, Integer id) {
+    // Only delete if this recipe belongs to user
     recipeRepository
-        .findByIdAndTenantId(id, tenantId)
+        .findByIdAndUserId(id, userId)
         .ifPresent(r -> recipeRepository.deleteById(id));
   }
 

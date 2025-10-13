@@ -4,11 +4,11 @@ import com.mailgrub.model.Ingredient;
 import org.springframework.data.domain.Page;
 
 public interface IngredientService {
-  Page<Ingredient> findPage(String tenantId, String name, int page, int size);
+  Page<Ingredient> findPage(String userId, String name, int page, int size);
 
-  Ingredient create(String tenantId, Ingredient in);
+  Ingredient create(String userId, Ingredient in);
 
-  Ingredient update(String tenantId, Integer id, Ingredient patch);
+  Ingredient update(String userId, Integer id, Ingredient patch);
 
-  void delete(String tenantId, Integer id);
+  void delete(String userId, Integer id);
 }
