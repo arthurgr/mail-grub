@@ -26,31 +26,31 @@ public class PackagingServiceImpl implements PackagingService {
   @Cacheable(
       cacheNames = "packaging",
       key =
-          "#tenantId + ':' + (#packagingMaterials == null ? '' : #packagingMaterials) + ':' + #page + ':' + #size")
-  public Page<Packaging> findPage(String tenantId, String packagingMaterials, int page, int size) {
+          "#userId + ':' + (#packagingMaterials == null ? '' : #packagingMaterials) + ':' + #page + ':' + #size")
+  public Page<Packaging> findPage(String userId, String packagingMaterials, int page, int size) {
     var pageable = PageRequest.of(page, size);
     if (packagingMaterials == null || packagingMaterials.isBlank()) {
-      return repo.findByTenantId(tenantId, pageable);
+      return repo.findByUserId(userId, pageable);
     }
-    return repo.findByTenantIdAndPackagingMaterialsContainingIgnoreCase(
-        tenantId, packagingMaterials, pageable);
+    return repo.findByUserIdAndPackagingMaterialsContainingIgnoreCase(
+        userId, packagingMaterials, pageable);
   }
 
   @Override
-  @CacheEvict(cacheNames = "packaging", key = "#tenantId + ':*'", allEntries = true)
-  public Packaging create(String tenantId, Packaging in) {
+  @CacheEvict(cacheNames = "packaging", key = "#userId + ':*'", allEntries = true)
+  public Packaging create(String userId, Packaging in) {
     in.setId(null);
-    in.setTenantId(tenantId);
+    in.setUserId(userId);
     applyCostPerUnit(in);
     return repo.save(in);
   }
 
   @Override
-  @CacheEvict(cacheNames = "packaging", key = "#tenantId + ':*'", allEntries = true)
-  public Packaging update(String tenantId, Integer id, Packaging patch) {
+  @CacheEvict(cacheNames = "packaging", key = "#userId + ':*'", allEntries = true)
+  public Packaging update(String userId, Integer id, Packaging patch) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     if (patch.getPackagingMaterials() != null)
       existing.setPackagingMaterials(patch.getPackagingMaterials());
@@ -62,11 +62,11 @@ public class PackagingServiceImpl implements PackagingService {
   }
 
   @Override
-  @CacheEvict(cacheNames = "packaging", key = "#tenantId + ':*'", allEntries = true)
-  public void delete(String tenantId, Integer id) {
+  @CacheEvict(cacheNames = "packaging", key = "#userId + ':*'", allEntries = true)
+  public void delete(String userId, Integer id) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     repo.deleteById(id);
   }

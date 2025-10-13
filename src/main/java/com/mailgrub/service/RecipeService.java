@@ -6,13 +6,13 @@ import com.mailgrub.model.Recipe;
 import org.springframework.data.domain.Page;
 
 public interface RecipeService {
-  Page<RecipeResponse> findPage(String tenantId, String name, int page, int size);
+  Page<RecipeResponse> findPage(String userId, String name, int page, int size);
 
-  RecipeResponse getById(String tenantId, Integer id);
+  RecipeResponse getById(String userId, Integer id);
 
-  Recipe add(String tenantId, RecipeRequest request);
+  Recipe add(String userId, RecipeRequest request);
 
-  Recipe update(String tenantId, Integer id, RecipeRequest request);
+  Recipe update(String userId, Integer id, RecipeRequest request);
 
-  void deleteById(String tenantId, Integer id);
+  void deleteById(String userId, Integer id);
 }

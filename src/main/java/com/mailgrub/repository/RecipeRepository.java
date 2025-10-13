@@ -12,12 +12,12 @@ public interface RecipeRepository
     extends ListCrudRepository<Recipe, Integer>, PagingAndSortingRepository<Recipe, Integer> {
 
   @EntityGraph(attributePaths = {"recipeIngredients", "recipeIngredients.ingredient"})
-  Page<Recipe> findByTenantId(String tenantId, Pageable pageable);
+  Page<Recipe> findByUserId(String userId, Pageable pageable);
 
   @EntityGraph(attributePaths = {"recipeIngredients", "recipeIngredients.ingredient"})
-  Page<Recipe> findByTenantIdAndNameContainingIgnoreCase(
-      String tenantId, String name, Pageable pageable);
+  Page<Recipe> findByUserIdAndNameContainingIgnoreCase(
+      String userId, String name, Pageable pageable);
 
   @EntityGraph(attributePaths = {"recipeIngredients", "recipeIngredients.ingredient"})
-  Optional<Recipe> findByIdAndTenantId(Integer id, String tenantId);
+  Optional<Recipe> findByIdAndUserId(Integer id, String userId);
 }

@@ -14,8 +14,8 @@ public class Tax {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "tenant_id", nullable = false, updatable = false)
-  private String tenantId; // <-- tenant scope
+  @Column(name = "user_id", nullable = false, updatable = false)
+  private String userId; // <-- user scope
 
   private String jurisdiction;
 
@@ -32,12 +32,12 @@ public class Tax {
     this.id = id;
   }
 
-  public String getTenantId() {
-    return tenantId;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setTenantId(String tenantId) {
-    this.tenantId = tenantId;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public String getJurisdiction() {

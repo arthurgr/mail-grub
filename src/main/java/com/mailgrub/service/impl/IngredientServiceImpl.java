@@ -21,29 +21,29 @@ public class IngredientServiceImpl implements IngredientService {
   }
 
   @Override
-  @Cacheable(value = "ingredients", key = "#tenantId + ':' + #name + ':' + #page + ':' + #size")
-  public Page<Ingredient> findPage(String tenantId, String name, int page, int size) {
+  @Cacheable(value = "ingredients", key = "#userId + ':' + #name + ':' + #page + ':' + #size")
+  public Page<Ingredient> findPage(String userId, String name, int page, int size) {
     var pageable = PageRequest.of(page, size);
     if (name == null || name.isBlank()) {
-      return repo.findByTenantId(tenantId, pageable);
+      return repo.findByUserId(userId, pageable);
     }
-    return repo.findByTenantIdAndNameContainingIgnoreCase(tenantId, name, pageable);
+    return repo.findByUserIdAndNameContainingIgnoreCase(userId, name, pageable);
   }
 
   @Override
-  @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
-  public Ingredient create(String tenantId, Ingredient in) {
+  @CacheEvict(value = "ingredients", key = "#userId + ':*'", allEntries = true)
+  public Ingredient create(String userId, Ingredient in) {
     in.setId(null);
-    in.setTenantId(tenantId);
+    in.setUserId(userId);
     return repo.save(in);
   }
 
   @Override
-  @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
-  public Ingredient update(String tenantId, Integer id, Ingredient patch) {
+  @CacheEvict(value = "ingredients", key = "#userId + ':*'", allEntries = true)
+  public Ingredient update(String userId, Integer id, Ingredient patch) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     existing.setName(patch.getName());
     existing.setMeasurementType(patch.getMeasurementType());
@@ -53,11 +53,11 @@ public class IngredientServiceImpl implements IngredientService {
   }
 
   @Override
-  @CacheEvict(value = "ingredients", key = "#tenantId + ':*'", allEntries = true)
-  public void delete(String tenantId, Integer id) {
+  @CacheEvict(value = "ingredients", key = "#userId + ':*'", allEntries = true)
+  public void delete(String userId, Integer id) {
     var existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
-    if (!tenantId.equals(existing.getTenantId())) {
-      throw new IllegalArgumentException("Wrong tenant for entity");
+    if (!userId.equals(existing.getUserId())) {
+      throw new IllegalArgumentException("Wrong user for entity");
     }
     repo.deleteById(id);
   }

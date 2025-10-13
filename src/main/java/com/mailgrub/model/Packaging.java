@@ -13,8 +13,8 @@ public class Packaging {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "tenant_id", nullable = false, updatable = false)
-  private String tenantId;
+  @Column(name = "user_id", nullable = false, updatable = false)
+  private String userId;
 
   private String packagingMaterials;
 
@@ -36,12 +36,12 @@ public class Packaging {
     this.id = id;
   }
 
-  public String getTenantId() {
-    return tenantId;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setTenantId(String tenantId) {
-    this.tenantId = tenantId;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public String getPackagingMaterials() {

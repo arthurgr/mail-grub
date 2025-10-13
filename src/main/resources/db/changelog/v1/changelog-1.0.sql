@@ -3,7 +3,7 @@
 
 CREATE TABLE ingredient (
     id              SERIAL PRIMARY KEY NOT NULL,
-    tenant_id       TEXT NOT NULL,
+    user_id       TEXT NOT NULL,
     name            TEXT,
     measurement_type TEXT,
     purchase_size   DOUBLE PRECISION,

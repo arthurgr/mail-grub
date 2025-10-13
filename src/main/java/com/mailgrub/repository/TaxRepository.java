@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaxRepository extends JpaRepository<Tax, Integer> {
 
-  Page<Tax> findByTenantId(String tenantId, Pageable pageable);
+  Page<Tax> findByUserId(String userId, Pageable pageable);
 
-  Page<Tax> findByTenantIdAndJurisdictionContainingIgnoreCase(
-      String tenantId, String jurisdiction, Pageable pageable);
+  Page<Tax> findByUserIdAndJurisdictionContainingIgnoreCase(
+      String userId, String jurisdiction, Pageable pageable);
 }

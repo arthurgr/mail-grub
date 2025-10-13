@@ -3,7 +3,7 @@
 
 CREATE TABLE packaging (
     id SERIAL PRIMARY KEY NOT NULL,
-    tenant_id   TEXT NOT NULL,
+    user_id   TEXT NOT NULL,
     packaging_materials TEXT,
     average_cost NUMERIC(10,2),
     quantity INTEGER,

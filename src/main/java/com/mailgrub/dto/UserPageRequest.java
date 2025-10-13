@@ -1,18 +1,16 @@
 package com.mailgrub.dto;
 
-public class TenantPageRequest {
-  private String tenantId;
+public class UserPageRequest {
+  private String userId;
   private int page = 0;
   private int size = 20;
-  private String name;
-  private String jurisdiction;
 
-  public String getTenantId() {
-    return tenantId;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setTenantId(String tenantId) {
-    this.tenantId = tenantId;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public int getPage() {

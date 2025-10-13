@@ -1,13 +1,13 @@
 package com.mailgrub.controller;
 
 import com.mailgrub.dto.PagedResponse;
-import com.mailgrub.dto.TenantPageRequest;
+import com.mailgrub.dto.UserPageRequest;
 import com.mailgrub.model.Tax;
 import com.mailgrub.service.TaxService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tenants/{tenantId}/taxes")
+@RequestMapping("/user/{userId}/taxes")
 public class TaxController {
 
   private final TaxService taxService;
@@ -18,24 +18,24 @@ public class TaxController {
 
   @GetMapping
   public PagedResponse<Tax> list(
-      @RequestParam(required = false) String jurisdiction, TenantPageRequest req) {
+      @RequestParam(required = false) String jurisdiction, UserPageRequest req) {
     return PagedResponse.fromPage(
-        taxService.findPage(req.getTenantId(), jurisdiction, req.getPage(), req.getSize()));
+        taxService.findPage(req.getUserId(), jurisdiction, req.getPage(), req.getSize()));
   }
 
   @PostMapping
-  public Tax create(@PathVariable String tenantId, @RequestBody Tax body) {
-    return taxService.create(tenantId, body);
+  public Tax create(@PathVariable String userId, @RequestBody Tax body) {
+    return taxService.create(userId, body);
   }
 
   @PatchMapping("/{id}")
   public Tax update(
-      @PathVariable String tenantId, @PathVariable Integer id, @RequestBody Tax patch) {
-    return taxService.update(tenantId, id, patch);
+      @PathVariable String userId, @PathVariable Integer id, @RequestBody Tax patch) {
+    return taxService.update(userId, id, patch);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable String tenantId, @PathVariable Integer id) {
-    taxService.delete(tenantId, id);
+  public void delete(@PathVariable String userId, @PathVariable Integer id) {
+    taxService.delete(userId, id);
   }
 }
