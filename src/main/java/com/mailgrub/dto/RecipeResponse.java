@@ -1,7 +1,9 @@
 package com.mailgrub.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class RecipeResponse {
@@ -73,6 +75,7 @@ public class RecipeResponse {
     private Double averageCost;
     private Double amount;
     private String overrideMeasurementType;
+    private transient Integer itemsMade;
 
     public IngredientEntry() {}
 
@@ -83,7 +86,8 @@ public class RecipeResponse {
         Double purchaseSize,
         Double averageCost,
         Double amount,
-        String overrideMeasurementType) {
+        String overrideMeasurementType,
+        Integer itemsMade) {
       this.id = id;
       this.name = name;
       this.measurementType = measurementType;
@@ -91,6 +95,7 @@ public class RecipeResponse {
       this.averageCost = averageCost;
       this.amount = amount;
       this.overrideMeasurementType = overrideMeasurementType;
+      this.itemsMade = itemsMade;
     }
 
     public Integer getId() {
@@ -147,6 +152,29 @@ public class RecipeResponse {
 
     public void setOverrideMeasurementType(String overrideMeasurementType) {
       this.overrideMeasurementType = overrideMeasurementType;
+    }
+
+    public Integer getItemsMade() {
+      return itemsMade;
+    }
+
+    public void setItemsMade(Integer itemsMade) {
+      this.itemsMade = itemsMade;
+    }
+
+    @JsonProperty("totalItemYield")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
+    public BigDecimal getTotalItemYield() {
+      if (purchaseSize == null || amount == null || amount == 0 || itemsMade == null) {
+        return BigDecimal.ZERO;
+      }
+
+      BigDecimal total =
+          BigDecimal.valueOf(itemsMade)
+              .multiply(BigDecimal.valueOf(purchaseSize))
+              .divide(BigDecimal.valueOf(amount), 4, RoundingMode.HALF_UP);
+
+      return total.setScale(2, RoundingMode.HALF_UP);
     }
   }
 }

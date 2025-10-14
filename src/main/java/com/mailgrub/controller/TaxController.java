@@ -29,8 +29,7 @@ public class TaxController {
   }
 
   @PatchMapping("/{id}")
-  public Tax update(
-      @PathVariable String userId, @PathVariable Integer id, @RequestBody Tax patch) {
+  public Tax update(@PathVariable String userId, @PathVariable Integer id, @RequestBody Tax patch) {
     return taxService.update(userId, id, patch);
   }
 

@@ -60,7 +60,6 @@ public class RecipeServiceImpl implements RecipeService {
         request.getIngredients().stream()
             .map(
                 e -> {
-                  // Enforce ingredient belongs to the same user
                   Ingredient ing =
                       ingredientRepository
                           .findByIdAndUserId(e.getIngredientId(), userId)
@@ -126,10 +125,7 @@ public class RecipeServiceImpl implements RecipeService {
       cacheNames = {"recipes", "recipeById"},
       allEntries = true)
   public void deleteById(String userId, Integer id) {
-    // Only delete if this recipe belongs to user
-    recipeRepository
-        .findByIdAndUserId(id, userId)
-        .ifPresent(r -> recipeRepository.deleteById(id));
+    recipeRepository.findByIdAndUserId(id, userId).ifPresent(r -> recipeRepository.deleteById(id));
   }
 
   private RecipeResponse toResponse(Recipe recipe) {
@@ -142,9 +138,12 @@ public class RecipeServiceImpl implements RecipeService {
                         ri.getIngredient().getName(),
                         ri.getIngredient().getMeasurementType().name(),
                         ri.getIngredient().getPurchaseSize(),
-                        ri.getIngredient().getAverageCost().doubleValue(),
+                        ri.getIngredient().getAverageCost() != null
+                            ? ri.getIngredient().getAverageCost().doubleValue()
+                            : null,
                         ri.getAmount(),
-                        ri.getOverrideMeasurementType()))
+                        ri.getOverrideMeasurementType(),
+                        recipe.getItemsMade()))
             .toList();
 
     RecipeResponse resp = new RecipeResponse();
