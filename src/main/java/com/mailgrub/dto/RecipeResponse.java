@@ -80,14 +80,14 @@ public class RecipeResponse {
     public IngredientEntry() {}
 
     public IngredientEntry(
-            Integer id,
-            String name,
-            String measurementType,
-            Double purchaseSize,
-            Double averageCost,
-            Double amount,
-            String overrideMeasurementType,
-            Integer itemsMade) {
+        Integer id,
+        String name,
+        String measurementType,
+        Double purchaseSize,
+        Double averageCost,
+        Double amount,
+        String overrideMeasurementType,
+        Integer itemsMade) {
       this.id = id;
       this.name = name;
       this.measurementType = measurementType;
@@ -170,9 +170,9 @@ public class RecipeResponse {
       }
 
       BigDecimal total =
-              BigDecimal.valueOf(itemsMade)
-                      .multiply(BigDecimal.valueOf(purchaseSize))
-                      .divide(BigDecimal.valueOf(amount), 4, RoundingMode.HALF_UP);
+          BigDecimal.valueOf(itemsMade)
+              .multiply(BigDecimal.valueOf(purchaseSize))
+              .divide(BigDecimal.valueOf(amount), 4, RoundingMode.HALF_UP);
 
       return total.setScale(2, RoundingMode.HALF_UP);
     }

@@ -3,7 +3,6 @@ package com.mailgrub.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-
 import java.math.BigDecimal;
 
 @Entity
